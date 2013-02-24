@@ -525,6 +525,9 @@ class LRParser:
                             # returned token is the next lookahead
                             lookahead = tok
                             errtoken = None
+                            # HACK - wparry
+                            state = self.statestack[-1]
+                            # end HACK
                             continue
                     else:
                         if errtoken:
@@ -798,6 +801,9 @@ class LRParser:
                             # returned token is the next lookahead
                             lookahead = tok
                             errtoken = None
+                            # HACK wparry
+                            state = self.statestack[-1]
+                            # end hack
                             continue
                     else:
                         if errtoken:
@@ -1053,6 +1059,9 @@ class LRParser:
                             # returned token is the next lookahead
                             lookahead = tok
                             errtoken = None
+                            # HACK - wparry
+                            state = self.statestack[-1]
+                            # end hack
                             continue
                     else:
                         if errtoken:
