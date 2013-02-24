@@ -1,4 +1,5 @@
 import ply.lex as lex
+import ply.yacc as yacc
 
 tokens = ('TYPE_LINE', 'COST_LINE', 'PT_LINE', 'TEXT_LINE', 'BLANK_LINE')
 
@@ -11,18 +12,6 @@ t_TEXT_LINE = r".+\n"
 t_BLANK_LINE = r"\n"
 
 lex.lex()
-
-sample = (
-'''
-Squire
-1W
-Artifact Creature - Human Soldier
-1/2
-''')
-
-lex.input(sample)
-for tok in iter(lex.token, None):
-    print (repr(tok.type), repr(tok.value))
 
 
 def p_cardfile_more(p):
@@ -66,7 +55,40 @@ def p_empty(p):
     ' empty : '
     pass
 
-import ply.yacc as yacc
+
+def p_error(p):
+    print("Error at " + str(p))
+    # look for the blank line separating block
+    while 1:
+        tok = yacc.token()
+        if not tok:
+            break
+        if tok.type == 'BLANK_LINE':
+            yacc.restart()
+            yacc.errok()
+            return tok
+
 yacc.yacc()
 
-yacc.parse(sample)
+
+def unit_test():
+    sample = (
+'''
+Squire
+1W1
+Artifact Creature - Human Soldier
+1/2
+
+Squire
+1W2
+Artifact Creature - Human Soldier
+1/2
+''')
+    mvalid(sample)
+
+def mvalid(filestr):
+    lex.input(filestr)
+    yacc.parse(filestr,debug=0)
+
+if __name__ == "__main__":
+    unit_test()
