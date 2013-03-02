@@ -10,17 +10,32 @@ def marginalize(rect, margin):
     return mrect
 
 
+class CardWriter:
+    def __init__(self, canvas, rect):
+        self.canvas = canvas
+        margin = 0.1
+        self.rect = marginalize(rect, margin)
+        self.location = {'name': (self.rect["left"], self.rect["top"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.top]),
+                         'cost': (self.rect["right"], self.rect["top"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.top]),
+                         'pt': (self.rect["right"], self.rect["bot"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.bottom]),
+                         'types': (self.rect["left"], self.rect["top"] - 2, [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.bottom]),
+                         'rules_text': (self.rect["left"], self.rect["top"] - 3, [pyx.text.parbox(4.5), pyx.text.halign.left, pyx.text.valign.top]),
+                         'slot': (self.rect["left"], self.rect["bot"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.bottom])}
+
+    def write(self, item, text):
+        self.canvas.text(self.location[item][0], self.location[item][1], text, self.location[item][2])
+
+
 def drawcard(c, card, slot, rect):
-    margin = 0.1
-    mrect = marginalize(rect, margin)
-    c.text(mrect["left"], mrect["top"], card["name"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.top])
-    if "cost" in card:
-        c.text(mrect["right"], mrect["top"], card["cost"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.top])
-    if "pt" in card:
-        c.text(mrect["right"], mrect["bot"], card["pt"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.bottom])
-    c.text(mrect["left"], mrect["top"] - 2, card["types"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.bottom])
-    c.text(mrect["left"], mrect["top"] - 3, card["rules_text"], [pyx.text.parbox(4.5), pyx.text.halign.left, pyx.text.valign.top])
-    c.text(mrect["left"], mrect["bot"], slot, [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.bottom])
+    writer = CardWriter(c, rect)
+    writer.write('name', "\Large " + card['name'])
+    if 'cost' in card:
+        writer.write('cost', "\Large " + card['cost'])
+    if 'pt' in card:
+        writer.write('pt', "\Large " + card['pt'])
+    writer.write('types', card['types'])
+    writer.write('rules_text', card['rules_text'])
+    writer.write('slot', slot)
     c.stroke(pyx.path.rect(rect["left"], rect["bot"], rect["right"] - rect["left"], rect["top"] - rect["bot"]))
 
 
