@@ -15,11 +15,11 @@ class CardWriter:
         self.canvas = canvas
         margin = 0.1
         self.rect = marginalize(rect, margin)
-        self.location = {'name': (self.rect["left"], self.rect["top"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.top]),
-                         'cost': (self.rect["right"], self.rect["top"], [pyx.text.parbox(1.5), pyx.text.halign.right, pyx.text.valign.top]),
-                         'pt': (self.rect["right"], self.rect["bot"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.bottom]),
-                         'types': (self.rect["left"], self.rect["top"] - 2, [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.bottom]),
-                         'rules_text': (self.rect["left"], self.rect["top"] - 3, [pyx.text.parbox(4.5), pyx.text.halign.left, pyx.text.valign.top]),
+        self.location = {'name': (self.rect["left"], self.rect["top"], [pyx.text.parbox(4), pyx.text.halign.left, pyx.text.valign.top]),
+                         'cost': (self.rect["right"], self.rect["top"], [pyx.text.parbox(2), pyx.text.halign.right, pyx.text.valign.top]),
+                         'pt': (self.rect["right"], self.rect["bot"], [pyx.text.parbox(2), pyx.text.halign.right, pyx.text.valign.bottom]),
+                         'types': (self.rect["left"], self.rect["top"] - 2, [pyx.text.parbox(5.8), pyx.text.halign.left, pyx.text.valign.bottom]),
+                         'rules_text': (self.rect["left"], self.rect["top"] - 3, [pyx.text.parbox(5.8), pyx.text.halign.left, pyx.text.valign.top]),
                          'slot': (self.rect["left"], self.rect["bot"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.bottom])}
 
     def write(self, item, text):
@@ -56,11 +56,15 @@ def unit_test():
 
 class RectPage:
     def __init__(self):
-        x_size = 4.8
-        y_size = 6.7
+        x_size = 6.0
+        y_size = 8.6
+        x_count = 3
+        y_count = 3
         self.canvas = pyx.canvas.canvas()
         self.page = pyx.document.page(self.canvas, paperformat=pyx.document.paperformat.Letter)
-        self.rects = [{"left": x*x_size, "bot": y*y_size, "right": (x+1)*x_size, "top": (y+1)*y_size} for y in range(4) for x in [3, 2, 1, 0]]
+        self.rects = [{"left": x*x_size, "bot": y*y_size, "right": (x+1)*x_size, "top": (y+1)*y_size}
+                      for y in range(y_count)
+                      for x in reversed(range(x_count))]
 
     def full(self):
         if self.rects:
@@ -75,25 +79,44 @@ class RectPage:
         return self.page
 
 
+class RectDoc:
+    def __init__(self, filename):
+        self.filename = filename
+        self.pages = []
+        self.page = None
+
+    def draw(self, card, slot):
+        if not self.page:
+            self.page = RectPage()
+            self.pages.append(self.page.getpage())
+        self.page.draw(card, slot)
+        if self.page.full():
+            self.page = None
+
+    def save(self):
+        document = pyx.document.document(self.pages)
+        document.writePDFfile(self.filename)
+
+
 def make_playtest(cards, filename):
-    pages = []
-    page = RectPage()
+    from string import ascii_lowercase
+
+    pyx.text.set(lfs='12pt')
+    doc = RectDoc(filename)
 
     for (slot, slot_cards) in cards:
-        for card in slot_cards:
-            page.draw(card,slot)
-            if page.full():
-                pages.append(page.getpage())
-                page = RectPage()
+        for (card, suffix) in zip(slot_cards, ascii_lowercase):
+            if len(slot_cards) == 1:
+                slotname = slot
+            else:
+                slotname = slot + suffix
+            doc.draw(card, slotname)
 
-    pages.append(page.getpage())
-
-    doc = pyx.document.document(pages)
-    doc.writePDFfile(filename)
+    doc.save()
 
 
 def unit_test_2():
-    squire = {"name": "Squire", "cost": "1W", "pt": "1/2", "types": "Creature - Human Soldier", "rules_text":"Winning"}
+    squire = {"name": "Squire", "cost": "1W", "pt": "1/2", "types": "Creature - Human Soldier", "rules_text": "Winning"}
     cards = [('WC01', [squire]), ('WC02', [squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire])]
     make_playtest(cards, None)
 

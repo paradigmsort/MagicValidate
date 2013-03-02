@@ -109,7 +109,7 @@ def p_cardfile_done(p):
 
 def p_cardblock(p):
     'cardblock : ID_LINE cards'
-    p[0] = (p[1], p[2])
+    p[0] = (p[1].strip(), p[2])
 
 
 def p_cards(p):
