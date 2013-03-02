@@ -22,7 +22,8 @@ if args.directory:
     import os
     for (dirpath, dirnames, filenames) in os.walk(args.filename):
         for filename in filenames:
-            cards.extend(parse_file(os.path.join(dirpath,filename)))
+            if filename.endswith(".txt"):
+                cards.extend(parse_file(os.path.join(dirpath, filename)))
 else:
     cards = parse_file(args.filename)
 
