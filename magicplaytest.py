@@ -16,7 +16,7 @@ class CardWriter:
         margin = 0.1
         self.rect = marginalize(rect, margin)
         self.location = {'name': (self.rect["left"], self.rect["top"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.top]),
-                         'cost': (self.rect["right"], self.rect["top"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.top]),
+                         'cost': (self.rect["right"], self.rect["top"], [pyx.text.parbox(1.5), pyx.text.halign.right, pyx.text.valign.top]),
                          'pt': (self.rect["right"], self.rect["bot"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.bottom]),
                          'types': (self.rect["left"], self.rect["top"] - 2, [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.bottom]),
                          'rules_text': (self.rect["left"], self.rect["top"] - 3, [pyx.text.parbox(4.5), pyx.text.halign.left, pyx.text.valign.top]),
@@ -34,7 +34,7 @@ def drawcard(c, card, slot, rect):
     if 'pt' in card:
         writer.write('pt', "\Large " + card['pt'])
     writer.write('types', card['types'])
-    writer.write('rules_text', card['rules_text'])
+    writer.write('rules_text', card['rules_text'].replace('\n', '\\break '))
     writer.write('slot', slot)
     c.stroke(pyx.path.rect(rect["left"], rect["bot"], rect["right"] - rect["left"], rect["top"] - rect["bot"]))
 
