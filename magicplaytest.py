@@ -14,7 +14,8 @@ def drawcard(c, card, slot, rect):
     margin = 0.1
     mrect = marginalize(rect, margin)
     c.text(mrect["left"], mrect["top"], card["name"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.top])
-    c.text(mrect["right"], mrect["top"], card["cost"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.top])
+    if "cost" in card:
+        c.text(mrect["right"], mrect["top"], card["cost"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.top])
     if "pt" in card:
         c.text(mrect["right"], mrect["bot"], card["pt"], [pyx.text.parbox(1), pyx.text.halign.right, pyx.text.valign.bottom])
     c.text(mrect["left"], mrect["top"] - 2, card["types"], [pyx.text.parbox(3), pyx.text.halign.left, pyx.text.valign.bottom])
