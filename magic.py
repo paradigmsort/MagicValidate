@@ -7,6 +7,7 @@ parser.add_argument('filename', help='the file to validate')
 parser.add_argument('-m', '--make-playtest', action='store_true')
 parser.add_argument('-s', '--show', action='store_true')
 parser.add_argument('-d', '--directory', action='store_true')
+parser.add_argument('-o', '--out-file')
 
 args = parser.parse_args()
 
@@ -31,4 +32,8 @@ if args.show:
     print cards
 
 if args.make_playtest:
-    magicplaytest.make_playtest(cards)
+    if hasattr(args,'outfile'):
+        outfile = args.outfile
+    else:
+        outfile = args.filename + ".pdf"
+    magicplaytest.make_playtest(cards, outfile)

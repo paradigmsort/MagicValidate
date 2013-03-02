@@ -60,7 +60,7 @@ class RectPage:
         return self.page
 
 
-def make_playtest(cards):
+def make_playtest(cards, filename):
     pages = []
     page = RectPage()
 
@@ -74,13 +74,13 @@ def make_playtest(cards):
     pages.append(page.getpage())
 
     doc = pyx.document.document(pages)
-    doc.writePDFfile()
+    doc.writePDFfile(filename)
 
 
 def unit_test_2():
     squire = {"name": "Squire", "cost": "1W", "pt": "1/2", "types": "Creature - Human Soldier", "rules_text":"Winning"}
     cards = [('WC01', [squire]), ('WC02', [squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire, squire])]
-    make_playtest(cards)
+    make_playtest(cards, None)
 
 if __name__ == "__main__":
     unit_test_2()
