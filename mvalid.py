@@ -135,19 +135,25 @@ def p_card(p):
     p[0] = p[1]
 
 
+def makedict(**kwargs):
+    for (k, v) in kwargs.items():
+        kwargs[k] = v.strip()
+    return kwargs
+
+
 def p_creature(p):
     'creature : TEXT_LINE COST_LINE CREATURE_TYPE_LINE PT_LINE rules_text'
-    p[0] = {'name': p[1], 'cost': p[2], 'types': p[3], 'pt': p[4], 'rules_text': p[5]}
+    p[0] = makedict(name=p[1], cost=p[2], types=p[3], pt=p[4], rules_text=p[5])
 
 
 def p_noncreature(p):
     'spell : TEXT_LINE COST_LINE OTHER_TYPE_LINE rules_text'
-    p[0] = {'name': p[1], 'cost': p[2], 'types': p[3], 'rules_text': p[4]}
+    p[0] = makedict(name=p[1], cost=p[2], types=p[3], rules_text=p[4])
 
 
 def p_land(p):
     'land : TEXT_LINE LAND_TYPE_LINE rules_text'
-    p[0] = {'name': p[1], 'types': p[2], 'rules_text': p[3]}
+    p[0] = makedict(name=p[1], types=p[2], rules_text=p[3])
 
 
 def p_rules_text_more(p):
@@ -207,12 +213,13 @@ Squire
 Artifact Creature - Human Soldier
 1/2
 ''')
-    mvalid(sample)
+    test = mvalid(sample)
+    print(test)
 
 
 def mvalid(filestr):
     lex.input(filestr)
-    yacc.parse(filestr, debug=0)
+    return yacc.parse(filestr, debug=0)
 
 if __name__ == "__main__":
     unit_test()
