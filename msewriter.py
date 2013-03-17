@@ -30,22 +30,28 @@ class MseWriter:
         if (blockname != self.blockstack.pop()):
             raise Exception("BlockCloseError")
 
+    def writecard(self, card):
+        self.startblock("card")
+        self.addfield("name", card["name"])
+        self.addfield("casting cost", card["cost"])
+        #super type
+        #subtype
+        self.startblock("rule text")
+        for line in card["rules_text"].split("\n"):
+            self.writeline(card["rules_text"])
+        self.endblock("rule text")
+        if "pt" in card:
+            power, toughness = card["pt"].split("/")
+            self.addfield("power", power)
+            self.addfield("toughness", toughness)
 
-def writecard(writer, card):
-    writer.startblock("card")
-    writer.addfield("name", card["name"])
-    writer.addfield("casting cost", card["cost"])
-    #super type
-    #subtype
-    writer.startblock("rule text")
-    for line in card["rules_text"].split("\n"):
-        writer.writeline(card["rules_text"])
-    writer.endblock("rule text")
-    if "pt" in card:
-        power, toughness = card["pt"].split("/")
-        writer.addfield("power", power)
-        writer.addfield("toughness", toughness)
+    def writeheader(self):
+        self.addfield("mse version", "0.3.8")
+        self.addfield("game", "magic")
+        self.addfield("stylesheet", "new")
 
 if __name__ == "__main__":
     squire = {"name": "Squire", "cost": "1W", "pt": "1/2", "types": "Creature - Human Soldier", "rules_text": "Winning"}
-    writecard(MseWriter("test_set"), squire)
+    writer = MseWriter("set")
+    writer.writeheader()
+    writer.writecard(squire)
