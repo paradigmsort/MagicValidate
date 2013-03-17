@@ -34,8 +34,9 @@ class MseWriter:
         self.startblock("card")
         self.addfield("name", card["name"])
         self.addfield("casting cost", card["cost"])
-        #super type
-        #subtype
+        supertypes, subtypes = card["types"].split("-")
+        self.addfield("super type", supertypes.strip())
+        self.addfield("sub type", subtypes.strip())
         self.startblock("rule text")
         for line in card["rules_text"].split("\n"):
             self.writeline(card["rules_text"])
