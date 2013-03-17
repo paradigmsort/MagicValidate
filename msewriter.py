@@ -43,7 +43,7 @@ class MseWriter:
         self.addfield("super type", supertypes.strip())
         self.startblock("rule text")
         for line in card["rules_text"].split("\n"):
-            self.writeline(card["rules_text"])
+            self.writeline(line)
         self.endblock("rule text")
         if "pt" in card:
             power, toughness = card["pt"].split("/")
@@ -63,7 +63,7 @@ class MseWriter:
                 self.writecard(card)
 
 if __name__ == "__main__":
-    squire = {"name": "Squire", "cost": "1W", "pt": "1/2", "types": "Creature - Human Soldier", "rules_text": "Winning"}
+    squire = {"name": "Squire", "cost": "1W", "pt": "1/2", "types": "Creature - Human Soldier", "rules_text": "Winning\nTesting"}
     writer = MseWriter("set")
     writer.writeheader()
     writer.writecard(squire)
