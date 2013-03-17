@@ -33,10 +33,14 @@ class MseWriter:
     def writecard(self, card):
         self.startblock("card")
         self.addfield("name", card["name"])
-        self.addfield("casting cost", card["cost"])
-        supertypes, subtypes = card["types"].split("-")
+        if "cost" in card:
+            self.addfield("casting cost", card["cost"])
+        if '-' in card["types"]:
+            supertypes, subtypes = card["types"].split("-")
+            self.addfield("sub type", subtypes.strip())
+        else:
+            supertypes = card["types"]
         self.addfield("super type", supertypes.strip())
-        self.addfield("sub type", subtypes.strip())
         self.startblock("rule text")
         for line in card["rules_text"].split("\n"):
             self.writeline(card["rules_text"])
@@ -45,11 +49,18 @@ class MseWriter:
             power, toughness = card["pt"].split("/")
             self.addfield("power", power)
             self.addfield("toughness", toughness)
+        self.endblock("card")
 
     def writeheader(self):
         self.addfield("mse version", "0.3.8")
         self.addfield("game", "magic")
         self.addfield("stylesheet", "new")
+
+    def writeset(self, cards):
+        self.writeheader()
+        for (slot, slot_cards) in cards:
+            for card in slot_cards:
+                self.writecard(card)
 
 if __name__ == "__main__":
     squire = {"name": "Squire", "cost": "1W", "pt": "1/2", "types": "Creature - Human Soldier", "rules_text": "Winning"}

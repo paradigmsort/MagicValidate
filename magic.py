@@ -1,10 +1,12 @@
 import argparse
 import mvalid
 import magicplaytest
+import msewriter
 
 parser = argparse.ArgumentParser(description='Validate magic files')
 parser.add_argument('filename', help='the file to validate')
 parser.add_argument('-m', '--make-playtest', action='store_true')
+parser.add_argument('-e', '--make-mse-set', action='store_true')
 parser.add_argument('-s', '--show', action='store_true')
 parser.add_argument('-d', '--directory', action='store_true')
 parser.add_argument('-o', '--out-file')
@@ -37,3 +39,7 @@ if args.make_playtest:
     else:
         outfile = args.filename + ".pdf"
     magicplaytest.make_playtest(cards, outfile)
+
+if args.make_mse_set:
+    set_writer = msewriter.MseWriter('set')
+    set_writer.writeset(cards)
