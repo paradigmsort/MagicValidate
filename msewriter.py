@@ -1,6 +1,11 @@
+#coding: utf-8
+import zipfile
+
+
 class MseWriter:
     def __init__(self, filename):
-        self.file = open(filename, "w")
+        self.file = open("set", "w")
+        self.zipfile = zipfile.ZipFile(filename, "w")
         self.indent_level = 0
         self.blockstack = []
 
@@ -55,12 +60,21 @@ class MseWriter:
         self.addfield("mse version", "0.3.8")
         self.addfield("game", "magic")
         self.addfield("stylesheet", "new")
+        self.startblock("set info")
+        self.addfield("copyright", "™ & © 1993—2013 Wizards of the Coast LLC")
+        self.addfield("automatic card numbers", "true")
+        self.endblock("set info")
 
     def writeset(self, cards):
         self.writeheader()
         for (slot, slot_cards) in cards:
             for card in slot_cards:
                 self.writecard(card)
+
+    def finalize(self):
+        self.file.close()
+        self.zipfile.write("set")
+        self.zipfile.close()
 
 if __name__ == "__main__":
     squire = {"name": "Squire", "cost": "1W", "pt": "1/2", "types": "Creature - Human Soldier", "rules_text": "Winning\nTesting"}

@@ -34,12 +34,17 @@ if args.show:
     print cards
 
 if args.make_playtest:
-    if hasattr(args,'outfile'):
+    if hasattr(args, 'outfile'):
         outfile = args.outfile
     else:
         outfile = args.filename + ".pdf"
     magicplaytest.make_playtest(cards, outfile)
 
 if args.make_mse_set:
-    set_writer = msewriter.MseWriter('set')
+    if hasattr(args, 'outfile'):
+        outfile = args.outfile
+    else:
+        outfile = args.filename + ".mse-set"
+    set_writer = msewriter.MseWriter(outfile)
     set_writer.writeset(cards)
+    set_writer.finalize()
