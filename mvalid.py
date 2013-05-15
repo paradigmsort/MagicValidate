@@ -31,6 +31,11 @@ def lines(n, t):
     t.lexer.lineno += n
 
 
+@lex.TOKEN(r"\#.*\n")
+def t_COMMENT_LINE(t):
+    pass
+
+
 @lex.TOKEN(r"(" + mana + r"|C)" + rarity + r"\d+\n")
 def t_ID_LINE(t):
     lines(1, t)
@@ -73,7 +78,7 @@ def t_TEXT_LINE(t):
     return t
 
 
-@lex.TOKEN(r"\nor\n\n")
+@lex.TOKEN(r"\n(\#.*\n)*or\n(\#.*\n)*\n")
 def t_OR_BLOCK(t):
     lines(3, t)
     return t
@@ -203,9 +208,12 @@ Artifact Creature - Human Soldier
 WC03
 Squire
 1W
+#comment
 Artifact Creature - Human Soldier
 1/2
+#
 
+#
 or
 
 Squire
